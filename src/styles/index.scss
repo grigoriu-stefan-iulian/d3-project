@@ -1,17 +1,35 @@
-@import "abstracts/functions";
-@import "abstracts/mixins";
-@import "abstracts/variables";
+@import "./base/base";
+svg {
+  border: 1px solid #ccc;
+}
 
-@import "base/animations";
-@import "base/base";
-@import "base/utilities";
+text {
+  font-family: "Avenir", sans-serif;
+}
 
-@import "components/button";
-@import "components/form";
+.axis .domain {
+  stroke: none;
+}
 
-@import "layout/grid";
+.x .tick line {
+  stroke: white;
+}
 
+button {
+  outline: none;
+  color: black;
+  border: none;
+  background: #fefefe;
+  padding: 3px 10px;
+  font-family: Avenir, sans-serif;
+  transition: all 200ms;
+  cursor: pointer;
+}
 
+button:hover {
+  background: #f7f7f7;
+}
 
-
-
+button:focus {
+  background: #00ff37;
+}
