@@ -46,7 +46,7 @@ function filterData(data) {
 // Drawing utilities.
 function formatTicks(d) {
   return d3
-    .format("~s")(d)
+    .format(".2~s")(d)
     .replace("M", " mil")
     .replace("G", " bil")
     .replace("T", " tril");
@@ -54,6 +54,52 @@ function formatTicks(d) {
 
 function cutText(string) {
   return string.length < 35 ? string : string.substring(0, 35) + "...";
+}
+
+// Tooltip handler.
+function mouseover() {
+  // Get data.
+  const barData = d3.select(this).data()[0];
+
+  const bodyData = [
+    ["Budget", formatTicks(barData.budget)],
+    ["Revenue", formatTicks(barData.revenue)],
+    ["Profit", formatTicks(barData.revenue - barData.budget)],
+    ["TMDb Popularity", Math.round(barData.popularity)],
+    ["IMDb Rating", barData.vote_average],
+    ["Genres", barData.genres.join(", ")]
+  ];
+
+  // Build tip.
+  const tip = d3.select(".tooltip");
+
+  tip
+    .style("left", `${d3.event.clientX + 15}px`)
+    .style("top", `${d3.event.clientY}px`)
+    .transition()
+    .style("opacity", 0.98);
+
+  tip.select("h3").html(`${barData.title}, ${barData.release_year}`);
+  tip.select("h4").html(`${barData.tagline}, ${barData.runtime} min.`);
+
+  d3.select(".tip-body")
+    .selectAll("p")
+    .data(bodyData)
+    .join("p")
+    .attr("class", "tip-info")
+    .html(d => `${d[0]}: ${d[1]}`);
+}
+
+function mousemove() {
+  d3.select(".tooltip")
+    .style("left", `${d3.event.clientX + 15}px`)
+    .style("top", `${d3.event.clientY}px`);
+}
+
+function mouseout() {
+  d3.select(".tooltip")
+    .transition()
+    .style("opacity", 0);
 }
 
 // Main function.
@@ -126,6 +172,12 @@ function ready(movies) {
     headline.text(
       `Total ${metric} by title ${metric === "popularity" ? "" : "in $US"}`
     );
+
+    // Tooltip interaction.
+    d3.selectAll(".bar")
+      .on("mouseover", mouseover)
+      .on("mousemove", mousemove)
+      .on("mouseout", mouseout);
   }
 
   // Data prep.
